@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Weather App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
+</head>
+
+<body>
+    <div class="container">
+        <div class="weather_card">
+            <h1>Samarth Arora</h1>
+            <h3>Weather App</h3>
+            <input type="text" id="city_name_input" placeholder=" Enter The Name Of Your City">
+            <button id="city_name_button">Enter</button>
+            <div id="weather_info">
+                <h3 id="city_name_container"></h3>
+                <p id="date"></p>
+                <img id="weather-icon" src="https://uxwing.com/wp-content/themes/uxwing/download/weather/weather-icon.png">
+                <p id="temperature"></p>
+				<p id="description"></p>
+				<p id="wind-speed"></p>
+            </div>
+        </div>
+    </div>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Montserrat', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(to right, #4CAF50, #2196F3);
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .weather_card {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
+            width: 450px;
+        }
+
+        .weather_card:hover {
+            transform: scale(1.05);
+        }
+
+        #city_name_input {
+            padding: 15px;
+            margin: 10px 0;
+            width: 70%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        #city_name_input:focus {
+            outline: none;
+            border-color: #2196F3;
+        }
+
+        #city_name_input::placeholder {
+            color: #aaa;
+        }
+
+        #city_name_button {
+            padding: 10px;
+            background-color: #2196F3;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #city_name_button:hover {
+            background-color: #1565C0;
+        }
+
+        #weather-info {
+            display: none;
+        }
+
+        #weather-icon {
+            width: 100px;
+            height: 100px;
+        }
+
+        #temperature {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 8px 0;
+        }
+
+        #description {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        #wind-speed {
+            font-size: 16px;
+            color: rgb(255, 0, 0);
+        }
+
+        #date {
+            font-size: 14px;
+            color: rgb(255, 0, 0);
+        }
+    </style>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<script>
+const url = "https://api.openweathermap.org/data/2.5/weather";
+const apiKey = "629b959ecd6cc9fc5c485f08035b2eee";
+$(document).ready(function () {
+
+    weatherFn("Noida");
+
+    $("#city_name_button").click(function () {
+
+        const city = $("#city_name_input").val().trim();
+
+        if (city !== "") {
+            weatherFn(city);
+        } else {
+            alert("Please enter a city name.");
+        }
+
+    });
+
+});
+
+async function weatherFn(cityName) {
+
+    const apiUrl = `${url}?q=${cityName}&appid=${apiKey}&units=metric`;
+
+    try {
+
+        const res = await fetch(apiUrl);
+        const data = await res.json();
+
+        if (res.ok) {
+            weatherShowFn(data);
+        } else {
+            alert("City not found!");
+        }
+
+    } catch (error) {
+
+        console.log(error);
+
+    }
+
+}
+
+function weatherShowFn(data) {
+
+    $("#city_name_container").text(data.name);
+
+    const today = new Date();
+
+    $("#date").text(today.toLocaleString());
+
+    $("#temperature").html(`${Math.round(data.main.temp)}°C`);
+
+    $("#description").text(data.weather[0].description);
+
+    $("#wind-speed").html(`Wind Speed: ${data.wind.speed} m/s`);
+
+    $("#weather-icon").attr(
+        "src",
+        `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`
+    );
+
+    $("#weather_info").fadeIn();
+
+}
+</script>
+</body>
+
+</html>
